@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from utils import *
+from scipy.stats import multivariate_normal
 
 class PPCA():
     
@@ -72,6 +74,35 @@ class PPCA():
     
     
 
+class BayesianLinearRegression():
+    
+    def __init__(self, basis_function = add_bias_parameter):
+        self.basis_function = basis_function
+    
+    def fit(self, x, Y, alpha = 2, beta = 25):
+        
+        self.beta = beta
+        
+        X = self.basis_function(x)
+        var_inv = alpha*np.eye(X.shape[1]) + beta*X.T.dot(X)
+        var = np.linalg.inv(var_inv)
+        mean = beta * var.dot(X.T).dot(Y)
+        
+        self.mean = mean
+        self.var = var
+        
+    def predict(self, x, return_var = False):
+        X = self.basis_function(x)
+        
+        y = X.dot(self.mean)
+        
+        if return_var:
+            var = (1 / self.beta) + np.sum(X.dot(self.var) * X, axis = 1)
+            return y, var
+        else:
+            return y
+    
+    
 class LogisticRegression():
     
     def __init__(self):

@@ -35,3 +35,9 @@ def images_to_2d(images):
 
 def vector_to_image(x, resolution):
     return x.reshape(resolution[0], resolution[1], -1)/255
+
+identity = lambda x: x
+
+def add_bias_parameter(x):
+    '''Adiciona os termos independentes (parâmetro bias) aos dados'''
+    return np.concatenate([np.ones(x.shape), x], axis=1)
