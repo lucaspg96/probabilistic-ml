@@ -7,6 +7,7 @@
 # website: http://jupyter.org/
 *.jpeg
 *.jpg
+*.npy
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 

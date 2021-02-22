@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
 from scipy.stats import multivariate_normal
+import os
 
 class PPCA():
     
@@ -72,6 +73,21 @@ class PPCA():
     def reconstruct(self, z):
         return self.W.dot(z.T).T + self.mean
     
+    def save(self, name):
+        if not os.path.exists(name):
+            os.makedirs(name)
+        
+        np.save(os.path.join(name, "mean"),self.mean)
+        np.save(os.path.join(name, "W"),self.W)
+        np.save(os.path.join(name, "sigma"),self.sigma)
+        np.save(os.path.join(name, "M_inv"),self.M_inv)
+        
+    def load(self, name):
+        self.mean = np.load(os.path.join(name, "mean.npy"))
+        self.W = np.load(os.path.join(name, "W.npy"))
+        self.sigma = np.load(os.path.join(name, "sigma.npy"))
+        self.M_inv = np.load(os.path.join(name, "M_inv.npy"))
+        self.L = self.M_inv.shape[0]
     
 
 class BayesianLinearRegression():
@@ -101,6 +117,11 @@ class BayesianLinearRegression():
             return y, var
         else:
             return y
+        
+    def nlpd(self, x, Y):
+        mean, var = self.predict(x,return_var = True)
+        
+        return 0.5*np.log(2*np.pi) + np.sum(np.log(var) + np.square(Y - mean)/var)/(2*Y.shape[0])
     
     
 class LogisticRegression():
